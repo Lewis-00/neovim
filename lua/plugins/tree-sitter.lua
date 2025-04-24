@@ -3,9 +3,6 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
 	build = ":TSUpdate",
-  dependencis = {
-    "windwp/nvim-ts-autotag",
-  },
 	config = function()
 		require("nvim-treesitter.configs").setup({
 			-- A list of parser names, or "all" (the four listed parsers should always be installed)
@@ -51,7 +48,6 @@ return {
 			},
 
 			indent = { enable = true },
-			autotag = { enable = true },
 
       -- Selezione incrementale
 			incremental_selection = {

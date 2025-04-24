@@ -1,70 +1,31 @@
 return {
-   "nvimdev/dashboard-nvim",
+   "goolord/alpha-nvim",
    event = "VimEnter",
-   opts = function()
-      local logo = [[
-                                                                             
-               ████ ██████           █████      ██                     
-              ███████████             █████                             
-              █████████ ███████████████████ ███   ███████████   
-             █████████  ███    █████████████ █████ ██████████████   
-            █████████ ██████████ █████████ █████ █████ ████ █████   
-          ███████████ ███    ███ █████████ █████ █████ ████ █████  
-         ██████  █████████████████████ ████ █████ █████ ████ ██████ 
-      ]]
+   dependencies = {
+      "nvim-tree/nvim-web-devicons",
+   },
+   config = function()
+      local alpha = require("alpha")
+      local dashboard = require("alpha.themes.dashboard")
 
-      logo = string.rep("\n", 8) .. logo .. "\n\n"
-
-      local opts = {
-         theme = "doom",
-         hide = {
-            -- this is taken care of by lualine
-            -- enabling this messes up the actual laststatus setting after loading a file
-            statusline = false,
-         },
-         config = {
-            header = vim.split(logo, "\n"),
-          -- stylua: ignore
-          center = {
-            {icon_hl = "Title", action = "Telescope find_files", desc = " Find file", icon = " ", key = "f" },
-            {icon_hl = "Title", action = "Telescope oldfiles", desc = " Recent files", icon = " ", key = "r" },
-            {icon_hl = "Title", action = "Telescope live_grep", desc = " Find text", icon = " ", key = "g" },
-            -- {
-            --   action = [[lua require("lazyvim.util").telescope.config_files()()]],
-            --   desc = " Config",
-            --   icon = " ",
-            --   key = "c"
-            -- },
-            -- { action = 'lua require("persistence").load()', desc = " Restore Session", icon = " ", key = "s" },
-            -- { action = "LazyExtras", desc = " Lazy Extras", icon = " ", key = "x" },
-          {action = "SessionRestore", desc = "Restore Session", icon = " ", key = "s" },
-            { action = "Lazy", desc = " Lazy", icon = "󰒲 ", key = "l" },
-            { action = "qa", desc = " Quit", icon = " ", key = "q" },
-          },
-            footer = function()
-               local stats = require("lazy").stats()
-               local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
-               return { "⚡ Neovim loaded " .. stats.loaded .. "/" .. stats.count .. " plugins in " .. ms .. "ms" }
-            end,
-         },
+      -- Personalizzazione dei pulsanti
+      dashboard.section.buttons.val = {
+         dashboard.button("f", "  Find File", ":Telescope find_files<CR>"),
+         dashboard.button("r", "  Recent Files", ":Telescope oldfiles<CR>"),
+         dashboard.button("g", "  Find Text", ":Telescope live_grep<CR>"),
+         dashboard.button("s", "  Restore Session", ":SessionRestore<CR>"),
+         dashboard.button("l", "  Lazy", ":Lazy<CR>"),
+         dashboard.button("q", "  Quit", ":qa<CR>"),
       }
 
-      for _, button in ipairs(opts.config.center) do
-         button.desc = button.desc .. string.rep(" ", 43 - #button.desc)
-         button.key_format = "  %s"
+      -- Personalizzazione del footer
+      dashboard.section.footer.val = function()
+         local stats = require("lazy").stats()
+         local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
+         return { "⚡ Neovim loaded " .. stats.loaded .. "/" .. stats.count .. " plugins in " .. ms .. "ms" }
       end
 
-      -- close Lazy and re-open when the dashboard is ready
-      if vim.o.filetype == "lazy" then
-         vim.cmd.close()
-         vim.api.nvim_create_autocmd("User", {
-            pattern = "DashboardLoaded",
-            callback = function()
-               require("lazy").show()
-            end,
-         })
-      end
-
-      return opts
+      -- Impostazione della configurazione
+      alpha.setup(dashboard.config)
    end,
 }

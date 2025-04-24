@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------
--- OPTIONS 
+-- OPTIONS
 
 local opt = vim.opt
 
@@ -28,4 +28,3 @@ opt.clipboard:append("unnamedplus")
 
 opt.splitright = true
 opt.splitbelow = true
-

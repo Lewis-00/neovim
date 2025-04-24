@@ -82,22 +82,13 @@ return {
       })
       require("mason-lspconfig").setup({
          ensure_installed = {
-            "tsserver",
             "eslint",
-            "rust_analyzer",
-            "kotlin_language_server",
-            "jdtls",
             "lua_ls",
             "jsonls",
             "html",
-            "elixirls",
             "tailwindcss",
-            "tflint",
             "pylsp",
             "dockerls",
-            "bashls",
-            "marksman",
-            "cucumber_language_server",
             "astro",
          },
          handlers = {
@@ -156,7 +147,8 @@ return {
             end,
          },
          sources = {
-            { name = "nvim_lsp" },
+            { name = "nvim_lsp", priority = 1000 },
+            { name = "copilot", priority = 750 },
             { name = "luasnip", keyword_length = 2 },
             { name = "buffer", keyword_length = 3 },
             { name = "path" },
@@ -168,8 +160,20 @@ return {
             ["<C-Space>"] = cmp.mapping.complete(),
             ["<C-f>"] = cmp_action.luasnip_jump_forward(),
             ["<C-b>"] = cmp_action.luasnip_jump_backward(),
-            ["<Tab>"] = cmp_action.luasnip_supertab(),
-            ["<S-Tab>"] = cmp_action.luasnip_shift_supertab(),
+            ["<Tab>"] = cmp.mapping(function(fallback)
+               if cmp.visible() then
+                  cmp.select_next_item()
+               else
+                  fallback()
+               end
+            end, { "i", "s" }),
+            ["<S-Tab>"] = cmp.mapping(function(fallback)
+               if cmp.visible() then
+                  cmp.select_prev_item()
+               else
+                  fallback()
+               end
+            end, { "i", "s" }),
          }),
       })
    end,
